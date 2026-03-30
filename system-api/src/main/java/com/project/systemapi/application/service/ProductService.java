@@ -3,7 +3,7 @@ package com.project.systemapi.application.service;
 
 import com.project.systemapi.application.port.in.CreateProductUseCase;
 import com.project.systemapi.application.port.out.SaveProductPort;
-import com.project.systemapi.model.Product;
+import com.project.systemapi.domain.model.Product;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

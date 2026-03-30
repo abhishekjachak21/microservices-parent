@@ -1,9 +1,7 @@
-package com.project.systemapi.adapter;
+package com.project.systemapi.adapter.out.persistence;
 
 import com.project.systemapi.application.port.out.SaveProductPort;
-import com.project.systemapi.model.Product;
-import com.project.systemapi.model.repository.ProductJpaRepository;
-import com.project.systemapi.entity.ProductJpaEntity;
+import com.project.systemapi.domain.model.Product;
 import org.springframework.stereotype.Component;
 
 @Component

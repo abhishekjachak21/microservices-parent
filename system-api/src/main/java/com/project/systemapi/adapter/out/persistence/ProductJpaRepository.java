@@ -1,7 +1,6 @@
-package com.project.systemapi.model.repository;
+package com.project.systemapi.adapter.out.persistence;
 
 
-import com.project.systemapi.entity.ProductJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

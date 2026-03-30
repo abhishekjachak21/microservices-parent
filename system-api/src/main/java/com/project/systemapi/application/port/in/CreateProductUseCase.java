@@ -1,6 +1,6 @@
 package com.project.systemapi.application.port.in;
 
-import com.project.systemapi.model.Product;
+import com.project.systemapi.domain.model.Product;
 
 import java.math.BigDecimal;
 
