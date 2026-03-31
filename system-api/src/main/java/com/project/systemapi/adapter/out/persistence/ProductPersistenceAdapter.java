@@ -17,16 +17,20 @@ public class ProductPersistenceAdapter implements SaveProductPort {
     public Product save(Product product) {
 
         ProductJpaEntity entity = new ProductJpaEntity();
-        entity.setId(product.getId());
-        entity.setName(product.getName());
-        entity.setPrice(product.getPrice());
+        entity.setName(product.name());
+        entity.setPrice(product.price());
+        entity.setStatus(product.status());
 
         ProductJpaEntity saved = repo.save(entity);
 
         return new Product(
                 saved.getId(),
                 saved.getName(),
-                saved.getPrice()
+                saved.getPrice(),
+                saved.getStatus(),
+                null,
+                null,
+                saved.getCreatedAt()
         );
     }
 }

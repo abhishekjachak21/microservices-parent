@@ -1,4 +1,6 @@
 package com.project.systemapi.domain.model;
 
-public class ProductStatus {
+public enum ProductStatus {
+    ACTIVE,
+    INACTIVE
 }
