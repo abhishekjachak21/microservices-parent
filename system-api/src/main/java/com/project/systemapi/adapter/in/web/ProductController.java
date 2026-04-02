@@ -2,32 +2,55 @@ package com.project.systemapi.adapter.in.web;
 
 import com.project.systemapi.adapter.in.web.dto.ProductDTO;
 import com.project.systemapi.application.port.in.CreateProductUseCase;
+import com.project.systemapi.application.service.ProductService;
 import com.project.systemapi.domain.model.Product;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.UUID;
+import org.springframework.data.domain.Pageable;
+import java.net.URI;
+
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/v1/products")
 public class ProductController {
 
-    private final CreateProductUseCase useCase;
+    private final CreateProductUseCase createUC;
+    private final ProductService service;
 
-    public ProductController(CreateProductUseCase useCase) {
-        this.useCase = useCase;
+    public ProductController(CreateProductUseCase createUC,
+                             ProductService service) {
+        this.createUC = createUC;
+        this.service = service;
     }
 
-    @GetMapping("/name")
-    public String getName(){
-        return "Hello Microservice!";
+    @GetMapping
+    public String getName() {
+      return "Hi bro Microservices";
     }
 
     @PostMapping
-    public Product create(@RequestBody ProductRequest req) {
-        return useCase.create(req.getName(), req.getPrice());
+    public ResponseEntity<Product> create(@RequestBody ProductRequest req) {
+        Product p = createUC.create(req.getName(), req.getPrice());
+
+        return ResponseEntity
+                .created(URI.create("/api/v1/products/" + p.id()))
+                .body(p);
     }
 
+    @GetMapping("/{id}")
+    public Product get(@PathVariable Long id) {
+        return service.getById(id);
+    }
 
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        service.delete(id);
+    }
+}
 
 
 //    @GetMapping("/{id}")
@@ -41,4 +64,3 @@ public class ProductController {
 //        );
 //    }
 
-}

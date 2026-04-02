@@ -1,11 +1,13 @@
 package com.project.systemapi.adapter.out.persistence;
 
+import com.project.systemapi.application.port.out.LoadProductPort;
 import com.project.systemapi.application.port.out.SaveProductPort;
 import com.project.systemapi.domain.model.Product;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ProductPersistenceAdapter implements SaveProductPort {
+public class ProductPersistenceAdapter
+        implements SaveProductPort, LoadProductPort {
 
     private final ProductJpaRepository repo;
 
@@ -15,7 +17,6 @@ public class ProductPersistenceAdapter implements SaveProductPort {
 
     @Override
     public Product save(Product product) {
-
         ProductJpaEntity entity = new ProductJpaEntity();
         entity.setName(product.name());
         entity.setPrice(product.price());
@@ -23,14 +24,30 @@ public class ProductPersistenceAdapter implements SaveProductPort {
 
         ProductJpaEntity saved = repo.save(entity);
 
+        return mapToDomain(saved);
+    }
+
+    @Override
+    public Product getById(Long id) {
+        return repo.findById(id)
+                .map(this::mapToDomain)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    @Override
+    public void delete(Long id) {
+        repo.deleteById(id);
+    }
+
+    private Product mapToDomain(ProductJpaEntity e) {
         return new Product(
-                saved.getId(),
-                saved.getName(),
-                saved.getPrice(),
-                saved.getStatus(),
+                e.getId(),
+                e.getName(),
+                e.getPrice(),
+                e.getStatus(),
                 null,
                 null,
-                saved.getCreatedAt()
+                e.getCreatedAt()
         );
     }
 }
