@@ -3,6 +3,7 @@ package com.project.systemapi.adapter.out.persistence;
 import com.project.systemapi.application.port.out.LoadProductPort;
 import com.project.systemapi.application.port.out.SaveProductPort;
 import com.project.systemapi.domain.model.Product;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -31,7 +32,7 @@ public class ProductPersistenceAdapter
     public Product getById(Long id) {
         return repo.findById(id)
                 .map(this::mapToDomain)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
     }
 
     @Override

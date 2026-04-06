@@ -1,16 +1,19 @@
 package com.project.systemapi.adapter.in.web;
 
-import com.project.systemapi.adapter.in.web.dto.ProductDTO;
+import com.project.systemapi.adapter.in.web.dto.ProductResponse;
 import com.project.systemapi.application.port.in.CreateProductUseCase;
 import com.project.systemapi.application.service.ProductService;
 import com.project.systemapi.domain.model.Product;
-import org.springframework.data.domain.Page;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.data.domain.Pageable;
+
 import java.net.URI;
+import com.project.systemapi.adapter.in.web.dto.ProductRequest;
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -26,24 +29,22 @@ public class ProductController {
         this.service = service;
     }
 
-    @GetMapping
-    public String getName() {
-      return "Hi bro Microservices";
-    }
-
+    @Operation(summary = "Create a product")
     @PostMapping
-    public ResponseEntity<Product> create(@RequestBody ProductRequest req) {
-        Product p = createUC.create(req.getName(), req.getPrice());
+    public ResponseEntity<ProductResponse> create(@Valid @RequestBody ProductRequest req) {
+
+        Product p = createUC.create(req.name(), req.price());
 
         return ResponseEntity
                 .created(URI.create("/api/v1/products/" + p.id()))
-                .body(p);
+                .body(ProductResponse.from(p));
     }
 
     @GetMapping("/{id}")
-    public Product get(@PathVariable Long id) {
-        return service.getById(id);
+    public ProductResponse get(@PathVariable Long id) {
+        return ProductResponse.from(service.getById(id));
     }
+
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -51,16 +52,3 @@ public class ProductController {
         service.delete(id);
     }
 }
-
-
-//    @GetMapping("/{id}")
-//    public ProductDTO get(@PathVariable UUID id) {
-//        Product product = getProductUseCase.getProduct(id);
-//        return new ProductDTO(
-//                product.id(),
-//                product.name(),
-//                product.price(),
-//                product.status()
-//        );
-//    }
-
