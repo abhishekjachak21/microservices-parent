@@ -13,4 +13,6 @@ public class CorrelationIdInterceptor implements RequestInterceptor {
     public void apply(RequestTemplate template) {
         template.header("X-Correlation-ID", UUID.randomUUID().toString());
     }
+
+
 }

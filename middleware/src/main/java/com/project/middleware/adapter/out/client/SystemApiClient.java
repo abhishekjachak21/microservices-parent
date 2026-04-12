@@ -6,6 +6,8 @@ import com.project.middleware.adapter.out.client.dto.ProductDTO;
 import com.project.middleware.adapter.out.client.dto.SupplierDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+
 
 @FeignClient(
         name = "system-api",
@@ -24,4 +26,12 @@ public interface SystemApiClient {
 
     @GetMapping("/api/v1/suppliers/{id}")
     SupplierDTO getSupplierById(@PathVariable Long id);
+
+
+    @GetMapping("/api/v1/products")
+    Page<ProductDTO> getProducts(
+            @RequestParam int page,
+            @RequestParam int size
+    );
+
 }

@@ -1,0 +1,54 @@
+spring:
+  application:
+    name: middleware
+
+server:
+  port: 8082
+
+system-api:
+  url: http://localhost:8081
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 3000
+        readTimeout: 5000
+        loggerLevel: FULL
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      systemApi:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+        recordExceptions:
+          - feign.FeignException
+          - java.io.IOException
+
+  retry:
+    instances:
+      systemApi:
+        maxAttempts: 3
+        waitDuration: 500ms
+        enableExponentialBackoff: true
+        exponentialBackoffMultiplier: 2
+
+  bulkhead:
+    instances:
+      systemApi:
+        maxConcurrentCalls: 20
+
+  timelimiter:
+    instances:
+      systemApi:
+        timeoutDuration: 5s
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
