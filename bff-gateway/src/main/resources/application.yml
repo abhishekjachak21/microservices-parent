@@ -1,0 +1,44 @@
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: bff-gateway
+  cloud:
+    gateway:
+      routes:
+
+        - id: middleware-route
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/v1/products/**,/api/v1/catalog/**
+          filters:
+            - AddRequestHeader=X-Gateway, bff
+            - AddResponseHeader=X-BFF, gateway
+
+        - id: system-admin
+          uri: http://localhost:8081
+          predicates:
+            - Path=/admin/api/v1/**
+          filters:
+            - RewritePath=/admin(?<segment>/?.*), ${segment}
+
+
+
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+            allowedHeaders: "*"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

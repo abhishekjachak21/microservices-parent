@@ -1,4 +1,4 @@
-package com.project.bffgateway;
+package com.project.bff;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

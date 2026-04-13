@@ -1,53 +1,57 @@
 package com.project.middleware.application.service;
 
+import com.project.middleware.adapter.in.web.dto.ProductDetailResponse;
 import com.project.middleware.adapter.out.client.SystemApiClient;
 import com.project.middleware.adapter.out.client.dto.*;
 import com.project.middleware.adapter.in.web.dto.ProductDetailView;
-
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class CatalogOrchestrationService {
 
     private final SystemApiClient systemApi;
 
-    public ProductDetailView getProductDetail(Long id) {
+    public ProductDetailResponse getProductDetail(Long id) {
 
-        CompletableFuture<ProductDTO> productF =
-                CompletableFuture.supplyAsync(() ->
-                        systemApi.getProductById(id));
+        log.info("Fetching product details for id: {}", id);
 
-        // dependent calls (after product fetched)
-        CompletableFuture<CategoryDTO> categoryF =
-                productF.thenApply(p ->
-                        systemApi.getCategoryById(p.categoryId()));
 
-        CompletableFuture<SupplierDTO> supplierF =
-                productF.thenApply(p -> {
-                    if (p.supplierId() == null) return null;
-                    return systemApi.getSupplierById(p.supplierId());
-                });
 
-        CompletableFuture.allOf(productF, categoryF, supplierF).join();
+        ProductDTO product = systemApi.getProductById(id);
 
-        ProductDTO product = productF.join();
-        CategoryDTO category = categoryF.join();
-        SupplierDTO supplier = supplierF.join();
+        CategoryDTO category = null;
 
-        return new ProductDetailView(
+        if (product.categoryId() != null) {
+            category = systemApi.getCategoryById(product.categoryId());
+        }
+
+        SupplierDTO supplier = null;
+
+        if (product.supplierId() != null) {
+            supplier = systemApi.getSupplierById(product.supplierId());
+        }
+
+        if (product.supplierId() != null) {
+            supplier = systemApi.getSupplierById(product.supplierId());
+        }
+
+        return new ProductDetailResponse(
                 product.id(),
                 product.name(),
                 product.price(),
-                category != null ? category.name() : null,
+                category.name(),
                 supplier != null ? supplier.name() : null,
                 calculateTax(product.price())
         );
     }
+
 
     private BigDecimal calculateTax(BigDecimal price) {
         return price.multiply(BigDecimal.valueOf(0.18)); // 18%
