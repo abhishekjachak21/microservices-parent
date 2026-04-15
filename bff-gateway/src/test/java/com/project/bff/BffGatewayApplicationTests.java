@@ -1,4 +1,4 @@
-package com.project.bffgateway;
+package com.project.bff;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

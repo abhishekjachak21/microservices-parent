@@ -1,10 +1,16 @@
-
 server:
   port: 8080
 
 spring:
   application:
     name: bff-gateway
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+
   cloud:
     gateway:
       routes:
@@ -12,7 +18,8 @@ spring:
         - id: middleware-route
           uri: http://localhost:8082
           predicates:
-            - Path=/api/v1/products/**,/api/v1/catalog/**
+            - Path=/api/v1/products/**
+            - Path=/api/v1/catalog/**
           filters:
             - AddRequestHeader=X-Gateway, bff
             - AddResponseHeader=X-BFF, gateway
@@ -24,18 +31,18 @@ spring:
           filters:
             - RewritePath=/admin(?<segment>/?.*), ${segment}
 
-
-
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOrigins:
+              - "http://localhost:3000"
             allowedMethods:
               - GET
               - POST
               - PUT
               - DELETE
             allowedHeaders: "*"
+            allowCredentials: true
 
 management:
   endpoints:
