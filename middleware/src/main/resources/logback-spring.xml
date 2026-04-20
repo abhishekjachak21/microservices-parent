@@ -1,5 +1,7 @@
 <configuration>
 
+    <springProperty scope="context" name="appName" source="spring.application.name"/>
+
     <appender name="JSON_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="net.logstash.logback.encoder.LogstashEncoder">
 
@@ -8,7 +10,7 @@
             <includeMdcKeyName>correlationId</includeMdcKeyName>
 
             <customFields>
-                {"service":"${spring.application.name}"}
+                {"service":"${appName}"}
             </customFields>
 
         </encoder>

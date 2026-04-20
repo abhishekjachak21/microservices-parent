@@ -5,21 +5,27 @@ spring:
   application:
     name: bff-gateway
 
-
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
 
   cloud:
     gateway:
       routes:
 
-        - id: middleware-route
+        - id: products-route
           uri: http://localhost:8082
           predicates:
             - Path=/api/v1/products/**
+          filters:
+            - AddRequestHeader=X-Gateway, bff
+            - AddResponseHeader=X-BFF, gateway
+
+        - id: catalog-route
+          uri: http://localhost:8082
+          predicates:
             - Path=/api/v1/catalog/**
           filters:
             - AddRequestHeader=X-Gateway, bff
@@ -50,12 +56,21 @@ management:
     web:
       exposure:
         include: "*"
-  tracing:
-  sampling:
-    probability: 1.0
 
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: w3c
+
+  observations:
+    annotations:
+      enabled: true
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
 
 logging:
-  level:
-    root: INFO
-    org.springframework.cloud.gateway: INFO
+  pattern:
+    level: "%5p [${spring.application.name:},%mdc{traceId:-},%mdc{spanId:-}]"

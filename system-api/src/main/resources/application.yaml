@@ -1,3 +1,6 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: system-api
@@ -21,9 +24,31 @@ spring:
     baseline-on-migrate: true
     validate-on-migrate: true
 
-server:
-  port: 8081
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
 
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: w3c
 
-#  DROP DATABASE microservices_training;
-#  CREATE DATABASE microservices_training;
+  # 🔥 disable zipkin
+  zipkin:
+    tracing:
+      endpoint: ""
+
+  observations:
+    annotations:
+      enabled: true
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%mdc{traceId:-},%mdc{spanId:-}]"

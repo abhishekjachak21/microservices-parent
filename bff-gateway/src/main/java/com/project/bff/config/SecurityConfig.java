@@ -39,7 +39,7 @@ public class SecurityConfig {
                         .pathMatchers(HttpMethod.PUT, "/api/**").hasRole("ADMIN")
                         .pathMatchers(HttpMethod.DELETE, "/api/**").hasRole("ADMIN")
 
-                        .anyExchange().authenticated()
+                        .anyExchange().permitAll()
                 )
 
                 .oauth2ResourceServer(oauth2 -> oauth2

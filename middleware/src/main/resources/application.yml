@@ -1,9 +1,9 @@
+server:
+  port: 8082
+
 spring:
   application:
     name: middleware
-
-server:
-  port: 8082
 
 system-api:
   url: http://localhost:8081
@@ -46,9 +46,31 @@ resilience4j:
       systemApi:
         timeoutDuration: 5s
 
-
 management:
   endpoints:
     web:
       exposure:
         include: "*"
+
+  tracing:
+    sampling:
+      probability: 1.0
+    propagation:
+      type: w3c
+
+  # 🔥 IMPORTANT → disable zipkin export
+  zipkin:
+    tracing:
+      endpoint: ""
+
+  observations:
+    annotations:
+      enabled: true
+
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+logging:
+  pattern:
+    level: "%5p [${spring.application.name},%mdc{traceId:-},%mdc{spanId:-}]"

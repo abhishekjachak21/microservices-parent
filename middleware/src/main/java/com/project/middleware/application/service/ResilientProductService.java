@@ -10,6 +10,7 @@ import io.github.resilience4j.bulkhead.annotation.Bulkhead;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 
 import io.micrometer.core.instrument.Timer;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,7 @@ public class ResilientProductService {
     private final SystemApiClient systemApi;
     private final OrderMetrics metrics;
 
+    @Observed(name = "product.get-all", contextualName = "get-products")
     @CircuitBreaker(name = "systemApi", fallbackMethod = "fallbackProducts")
     @Retry(name = "systemApi")
     @Bulkhead(name = "systemApi")
